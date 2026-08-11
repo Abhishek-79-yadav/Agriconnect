@@ -1,0 +1,33 @@
+﻿# IntelliJ IDEA
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# Java / Maven
+target/
+**/target/
+
+# Node / React
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+
+# Environment / secrets
+.env
+**/.env
+application-local.properties
+application-local.yml
+
+# Logs
+logs/
+*.log
+
+# ZIP archives
+*.zip
+
+# OS
+.DS_Store
+Thumbs.db

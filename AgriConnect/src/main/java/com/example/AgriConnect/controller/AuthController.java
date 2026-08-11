@@ -1,0 +1,93 @@
+package com.example.AgriConnect.controller;
+
+import com.example.AgriConnect.dto.request.ForgotPasswordRequest;
+import com.example.AgriConnect.dto.request.LoginRequest;
+import com.example.AgriConnect.dto.request.LogoutRequest;
+import com.example.AgriConnect.dto.request.RefreshTokenRequest;
+import com.example.AgriConnect.dto.request.RegisterRequest;
+import com.example.AgriConnect.dto.request.ResetPasswordRequest;
+import com.example.AgriConnect.dto.response.ApiResponse;
+import com.example.AgriConnect.dto.response.AuthResponse;
+import com.example.AgriConnect.dto.response.UserResponse;
+import com.example.AgriConnect.service.AuthService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+
+@RestController
+@RequestMapping("/api/auth")
+@RequiredArgsConstructor
+public class AuthController {
+
+    private final AuthService authService;
+
+    @PostMapping("/register")
+    public ResponseEntity<AuthResponse> register(
+            @Valid @RequestBody RegisterRequest request) {
+
+        return ResponseEntity.ok(authService.register(request));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(
+            @Valid @RequestBody LoginRequest request) {
+
+        return ResponseEntity.ok(authService.login(request));
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(
+            @RequestBody ForgotPasswordRequest request) {
+
+        authService.forgotPassword(request.getEmail());
+
+        return ResponseEntity.ok("Reset link sent");
+    }
+    @GetMapping("/profile")
+    public ResponseEntity<UserResponse> profile(Authentication authentication) {
+
+        return ResponseEntity.ok(
+                authService.getProfile(authentication.getName())
+        );
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(
+            @Valid @RequestBody ResetPasswordRequest request) {
+
+        authService.resetPassword(
+                request.getEmail(),
+                request.getOtp(),
+                request.getNewPassword()
+        );
+
+        return ResponseEntity.ok("Password changed successfully");
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refresh(
+            @Valid @RequestBody RefreshTokenRequest request) {
+
+        return ResponseEntity.ok(authService.refreshToken(request.getRefreshToken()));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<Void>> logout(
+            HttpServletRequest httpRequest,
+            @RequestBody(required = false) LogoutRequest request) {
+
+        String authHeader = httpRequest.getHeader("Authorization");
+        String accessToken = (authHeader != null && authHeader.startsWith("Bearer "))
+                ? authHeader.substring(7)
+                : null;
+
+        String refreshToken = request != null ? request.getRefreshToken() : null;
+
+        authService.logout(accessToken, refreshToken);
+
+        return ResponseEntity.ok(ApiResponse.success("Logged out successfully", null));
+    }
+}

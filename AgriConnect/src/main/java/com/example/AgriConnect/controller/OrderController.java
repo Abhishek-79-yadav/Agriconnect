@@ -1,0 +1,47 @@
+package com.example.AgriConnect.controller;
+
+import com.example.AgriConnect.dto.response.OrderResponse;
+import com.example.AgriConnect.service.OrderService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/orders")
+@RequiredArgsConstructor
+public class OrderController {
+
+    private final OrderService orderService;
+
+    @PostMapping("/checkout")
+    public ResponseEntity<OrderResponse> checkout(
+            @RequestParam(defaultValue = "ONLINE") String paymentMethod,
+            Authentication auth) {
+        return ResponseEntity.ok(orderService.checkout(auth.getName(), paymentMethod));
+    }
+
+    @GetMapping("/buyer")
+    public ResponseEntity<List<OrderResponse>> getBuyerOrders(Authentication auth) {
+        return ResponseEntity.ok(orderService.getBuyerOrders(auth.getName()));
+    }
+
+    @GetMapping("/farmer")
+    public ResponseEntity<List<OrderResponse>> getFarmerOrders(Authentication auth) {
+        return ResponseEntity.ok(orderService.getFarmerOrders(auth.getName()));
+    }
+
+    // Lets a farmer move one of their orders through its lifecycle
+    // (CONFIRMED → SHIPPED → OUT_FOR_DELIVERY → DELIVERED), or cancel it.
+    // Also used by a buyer to cancel their own order (enforced in the
+    // service layer).
+    @PutMapping("/{id}/status")
+    public ResponseEntity<OrderResponse> updateStatus(
+            @PathVariable Long id,
+            @RequestParam String status,
+            Authentication auth) {
+        return ResponseEntity.ok(orderService.updateStatus(id, status, auth.getName()));
+    }
+}
