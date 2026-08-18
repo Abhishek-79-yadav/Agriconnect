@@ -37,3 +37,4 @@ public class CropHistory {
     private String pesticideUsed;
     @Column(name = "pesticide_quantity_l")
     private Double pesticideQuantityL;
+}
