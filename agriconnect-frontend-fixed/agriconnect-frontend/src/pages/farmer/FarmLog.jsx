@@ -32,6 +32,10 @@ const emptyForm = {
   yield: "",
   sellingPricePerUnit: "",
   costPricePerUnit: "",
+  fertilizerUsed: "",
+  fertilizerQuantityKg: "",
+  pesticideUsed: "",
+  pesticideQuantityL: "",
 };
 
 // A farmer's own day-to-day / season log — what was grown, how much it
@@ -80,6 +84,8 @@ export default function FarmLog() {
         yield: Number(form.yield),
         sellingPricePerUnit: Number(form.sellingPricePerUnit),
         costPricePerUnit: Number(form.costPricePerUnit),
+        fertilizerQuantityKg: form.fertilizerQuantityKg ? Number(form.fertilizerQuantityKg) : null,
+        pesticideQuantityL: form.pesticideQuantityL ? Number(form.pesticideQuantityL) : null,
       })
     );
 
@@ -140,6 +146,8 @@ export default function FarmLog() {
                   <th className="px-4 py-3">Cost</th>
                   <th className="px-4 py-3">Sell</th>
                   <th className="px-4 py-3">Profit</th>
+                  <th className="px-4 py-3">Fertilizer</th>
+                  <th className="px-4 py-3">Pesticide</th>
                   <th className="px-4 py-3 text-right">Actions</th>
                 </tr>
               </thead>
@@ -157,6 +165,12 @@ export default function FarmLog() {
                       <td className="px-4 py-3 text-slate-dark">₹{sell.toFixed(2)}</td>
                       <td className={`px-4 py-3 font-medium ${r.profit >= 0 ? "text-field-dark" : "text-rust"}`}>
                         ₹{r.profit?.toFixed(2)}
+                      </td>
+                      <td className="px-4 py-3 text-ink/70">
+                        {r.fertilizerUsed ? `${r.fertilizerUsed}${r.fertilizerQuantityKg ? ` (${r.fertilizerQuantityKg}kg)` : ""}` : "—"}
+                      </td>
+                      <td className="px-4 py-3 text-ink/70">
+                        {r.pesticideUsed ? `${r.pesticideUsed}${r.pesticideQuantityL ? ` (${r.pesticideQuantityL}L)` : ""}` : "—"}
                       </td>
                       <td className="px-4 py-3 text-right">
                         <button onClick={() => setToDelete(r)} className="rounded p-1.5 text-rust hover:bg-rust-light">
@@ -189,6 +203,18 @@ export default function FarmLog() {
           <div className="grid grid-cols-2 gap-4">
             <Input label="Selling price / unit (₹)" type="number" min="0" step="0.01" value={form.sellingPricePerUnit} onChange={set("sellingPricePerUnit")} />
             <Input label="Cost price / unit (₹)" type="number" min="0" step="0.01" value={form.costPricePerUnit} onChange={set("costPricePerUnit")} />
+          </div>
+
+          <p className="mt-1 text-xs font-medium uppercase tracking-wide text-ink/40">Inputs used (optional)</p>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Input label="Fertilizer used" value={form.fertilizerUsed} onChange={set("fertilizerUsed")} />
+            <Input label="Fertilizer quantity (kg)" type="number" min="0" step="0.01" value={form.fertilizerQuantityKg} onChange={set("fertilizerQuantityKg")} />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Input label="Pesticide used" value={form.pesticideUsed} onChange={set("pesticideUsed")} />
+            <Input label="Pesticide quantity (L)" type="number" min="0" step="0.01" value={form.pesticideQuantityL} onChange={set("pesticideQuantityL")} />
           </div>
 
           <Button type="submit" loading={submitting} className="mt-2 self-start">Save record</Button>

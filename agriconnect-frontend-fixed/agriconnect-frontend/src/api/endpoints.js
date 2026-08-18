@@ -30,6 +30,7 @@ export const FARMER_ENDPOINTS = {
   PRODUCT_BY_ID: (id) => `/farmer/products/${id}`,
   DELETE_PRODUCT: (id) => `/farmer/products/${id}`,
   UPDATE_PRICE: (id) => `/farmer/products/${id}/price`,
+  FARM_PROFILE: "/farmer/farm-profile",
 };
 
 export const BUYER_ENDPOINTS = {

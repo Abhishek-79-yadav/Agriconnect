@@ -18,6 +18,11 @@ public class CropHistoryResponse {
     private double costPricePerUnit;
     private double quantity;
 
+    private String fertilizerUsed;
+    private Double fertilizerQuantityKg;
+    private String pesticideUsed;
+    private Double pesticideQuantityL;
+
     // Computed for the farmer, not stored: (sellingPrice - costPrice) * quantity
     private double profit;
 }

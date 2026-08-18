@@ -29,4 +29,15 @@ public class CropHistoryRequest {
 
     @PositiveOrZero
     private double quantity;
+
+    // Optional — not every crop cycle involves either.
+    private String fertilizerUsed;
+
+    @PositiveOrZero
+    private Double fertilizerQuantityKg;
+
+    private String pesticideUsed;
+
+    @PositiveOrZero
+    private Double pesticideQuantityL;
 }

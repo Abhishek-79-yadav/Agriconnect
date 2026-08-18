@@ -34,3 +34,13 @@ export const farmerOrdersApi = async () => {
   const res = await axios.get(ORDER_ENDPOINTS.FARMER_ORDERS);
   return res.data;
 };
+
+export const getFarmProfileApi = async () => {
+  const res = await axios.get(FARMER_ENDPOINTS.FARM_PROFILE);
+  return res.data;
+};
+
+export const updateFarmProfileApi = async (data) => {
+  const res = await axios.put(FARMER_ENDPOINTS.FARM_PROFILE, data);
+  return res.data;
+};

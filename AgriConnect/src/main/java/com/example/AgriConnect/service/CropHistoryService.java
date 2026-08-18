@@ -36,6 +36,10 @@ public class CropHistoryService {
                 .sellingPricePerUnit(request.getSellingPricePerUnit())
                 .costPricePerUnit(request.getCostPricePerUnit())
                 .quantity(request.getQuantity())
+                .fertilizerUsed(request.getFertilizerUsed())
+                .fertilizerQuantityKg(request.getFertilizerQuantityKg())
+                .pesticideUsed(request.getPesticideUsed())
+                .pesticideQuantityL(request.getPesticideQuantityL())
                 .build();
 
         return mapToResponse(cropHistoryRepository.save(record));
@@ -89,6 +93,10 @@ public class CropHistoryService {
                 .sellingPricePerUnit(record.getSellingPricePerUnit())
                 .costPricePerUnit(record.getCostPricePerUnit())
                 .quantity(record.getQuantity())
+                .fertilizerUsed(record.getFertilizerUsed())
+                .fertilizerQuantityKg(record.getFertilizerQuantityKg())
+                .pesticideUsed(record.getPesticideUsed())
+                .pesticideQuantityL(record.getPesticideQuantityL())
                 .profit(profit)
                 .build();
     }
