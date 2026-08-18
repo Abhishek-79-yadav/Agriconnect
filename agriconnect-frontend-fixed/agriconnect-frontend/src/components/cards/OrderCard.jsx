@@ -46,6 +46,13 @@ export default function OrderCard({ order, action }) {
         </div>
       )}
 
+      {order.deliveryAddressLine && (
+        <div className="border-t border-line pt-3 text-sm text-ink/70">
+          <p className="font-medium text-ink">{order.deliveryName} · {order.deliveryPhone}</p>
+          <p>{order.deliveryAddressLine}, {order.deliveryCity}, {order.deliveryState} - {order.deliveryPincode}</p>
+        </div>
+      )}
+
       {order.couponCode && (
         <p className="text-xs text-ink/50">Coupon applied: {order.couponCode} (−₹{order.discount ?? 0})</p>
       )}

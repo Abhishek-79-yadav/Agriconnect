@@ -25,3 +25,13 @@ export const getAdminOrdersApi = async () => {
   const res = await axios.get(ADMIN_ENDPOINTS.ORDERS);
   return res.data;
 };
+
+export const getPayoutsApi = async () => {
+  const res = await axios.get(ADMIN_ENDPOINTS.PAYOUTS);
+  return res.data;
+};
+
+export const markPayoutPaidApi = async (orderItemId) => {
+  const res = await axios.put(ADMIN_ENDPOINTS.MARK_PAID(orderItemId));
+  return res.data;
+};

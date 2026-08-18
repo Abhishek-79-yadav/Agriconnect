@@ -131,6 +131,8 @@ export const ADMIN_ENDPOINTS = {
   ORDERS: "/admin/orders",
   DELETE_USER: (id) => `/admin/user/${id}`,
   DELETE_PRODUCT: (id) => `/admin/product/${id}`,
+  PAYOUTS: "/admin/payouts",
+  MARK_PAID: (orderItemId) => `/admin/payouts/${orderItemId}/mark-paid`,
 };
 
 export const WEATHER_ENDPOINTS = {

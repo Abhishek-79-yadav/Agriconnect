@@ -7,6 +7,7 @@ import { CreditCard, Truck, CheckCircle2 } from "lucide-react";
 import { placeOrderThunk } from "../../redux/thunks/orderThunk";
 import PageHeader from "../../components/common/PageHeader";
 import Button from "../../components/ui/Button";
+import Input from "../../components/ui/Input";
 import Payment from "./Payment";
 
 const PAYMENT_METHODS = [
@@ -14,10 +15,20 @@ const PAYMENT_METHODS = [
   { value: "COD", label: "Cash on Delivery", icon: Truck, hint: "Pay when your order arrives" },
 ];
 
+const EMPTY_ADDRESS = {
+  deliveryName: "",
+  deliveryPhone: "",
+  deliveryAddressLine: "",
+  deliveryCity: "",
+  deliveryState: "",
+  deliveryPincode: "",
+};
+
 export default function Checkout() {
   const dispatch = useDispatch();
   const { items } = useSelector((state) => state.cart);
   const [method, setMethod] = useState("ONLINE");
+  const [address, setAddress] = useState(EMPTY_ADDRESS);
   const [submitting, setSubmitting] = useState(false);
   const [placedOrder, setPlacedOrder] = useState(null);
 
@@ -30,11 +41,19 @@ export default function Checkout() {
 
   const total = items.reduce((sum, item) => sum + (item.totalPrice || 0), 0);
 
+  const addressComplete = Object.values(address).every((v) => v.trim().length > 0);
+
+  const setField = (field) => (e) => setAddress((a) => ({ ...a, [field]: e.target.value }));
+
   const checkout = async () => {
     if (submittingRef.current) return;
+    if (!addressComplete) {
+      toast.error("Please fill in your delivery address");
+      return;
+    }
     submittingRef.current = true;
     setSubmitting(true);
-    const result = await dispatch(placeOrderThunk(method));
+    const result = await dispatch(placeOrderThunk({ paymentMethod: method, ...address }));
     submittingRef.current = false;
     setSubmitting(false);
 
@@ -71,6 +90,18 @@ export default function Checkout() {
 
         {!placedOrder ? (
           <>
+            <div className="mt-6 flex flex-col gap-3">
+              <span className="text-sm font-medium text-ink">Delivery address</span>
+              <Input label="Full name" value={address.deliveryName} onChange={setField("deliveryName")} />
+              <Input label="Phone number" type="tel" value={address.deliveryPhone} onChange={setField("deliveryPhone")} />
+              <Input label="Address" value={address.deliveryAddressLine} onChange={setField("deliveryAddressLine")} />
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <Input label="City" value={address.deliveryCity} onChange={setField("deliveryCity")} />
+                <Input label="State" value={address.deliveryState} onChange={setField("deliveryState")} />
+                <Input label="Pincode" value={address.deliveryPincode} onChange={setField("deliveryPincode")} />
+              </div>
+            </div>
+
             <div className="mt-6 flex flex-col gap-2">
               <span className="text-sm font-medium text-ink">Payment method</span>
               {PAYMENT_METHODS.map(({ value, label, icon: Icon, hint }) => (
@@ -97,7 +128,7 @@ export default function Checkout() {
               ))}
             </div>
 
-            <Button onClick={checkout} loading={submitting} disabled={!items.length} className="mt-6 w-full">
+            <Button onClick={checkout} loading={submitting} disabled={!items.length || !addressComplete} className="mt-6 w-full">
               Place order
             </Button>
           </>

@@ -1,7 +1,9 @@
 package com.example.AgriConnect.controller;
 
+import com.example.AgriConnect.dto.request.CheckoutRequest;
 import com.example.AgriConnect.dto.response.OrderResponse;
 import com.example.AgriConnect.service.OrderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,9 +20,9 @@ public class OrderController {
 
     @PostMapping("/checkout")
     public ResponseEntity<OrderResponse> checkout(
-            @RequestParam(defaultValue = "ONLINE") String paymentMethod,
+            @RequestBody @Valid CheckoutRequest request,
             Authentication auth) {
-        return ResponseEntity.ok(orderService.checkout(auth.getName(), paymentMethod));
+        return ResponseEntity.ok(orderService.checkout(auth.getName(), request));
     }
 
     @GetMapping("/buyer")

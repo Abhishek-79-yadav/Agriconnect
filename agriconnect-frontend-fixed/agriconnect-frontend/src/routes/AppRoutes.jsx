@@ -66,6 +66,7 @@ import AdminOrders from "../pages/admin/Orders";
 import AdminCoupons from "../pages/admin/Coupons";
 import AdminSchemes from "../pages/admin/Schemes";
 import AdminReports from "../pages/admin/Reports";
+import AdminPayouts from "../pages/admin/Payouts";
 import AdminAnalytics from "../pages/admin/Analytics";
 import AdminNotifications from "../pages/admin/Notifications";
 import AdminSettings from "../pages/admin/Settings";
@@ -193,6 +194,7 @@ export default function AppRoutes() {
         <Route path="coupons" element={<AdminCoupons />} />
         <Route path="schemes" element={<AdminSchemes />} />
         <Route path="reports" element={<AdminReports />} />
+        <Route path="payouts" element={<AdminPayouts />} />
         <Route path="analytics" element={<AdminAnalytics />} />
         <Route path="notifications" element={<AdminNotifications />} />
         <Route path="settings" element={<AdminSettings />} />

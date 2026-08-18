@@ -2,10 +2,8 @@ import axios from "./axios";
 import { ORDER_ENDPOINTS } from "./endpoints";
 
 /** POST /api/orders/checkout */
-export const placeOrderApi = async (paymentMethod = "ONLINE") => {
-  const res = await axios.post(ORDER_ENDPOINTS.CHECKOUT, null, {
-    params: { paymentMethod },
-  });
+export const placeOrderApi = async (checkoutData) => {
+  const res = await axios.post(ORDER_ENDPOINTS.CHECKOUT, checkoutData);
   return res.data;
 };
 

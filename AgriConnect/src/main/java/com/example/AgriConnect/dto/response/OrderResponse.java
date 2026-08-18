@@ -23,6 +23,13 @@ public class OrderResponse {
     private LocalDateTime createdAt;
     private List<OrderItemResponse> items;
 
+    private String deliveryName;
+    private String deliveryPhone;
+    private String deliveryAddressLine;
+    private String deliveryCity;
+    private String deliveryState;
+    private String deliveryPincode;
+
     @Data
     @Builder
     public static class OrderItemResponse {

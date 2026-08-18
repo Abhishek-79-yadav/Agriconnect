@@ -59,4 +59,14 @@ public class Order {
     // not returned by PhonePe like Razorpay's order id is), and check the
     // callback/status-check against it the same way razorpayOrderId is used.
     private String phonepeTransactionId;
+
+    // Delivery address — captured at checkout. Stored on the order (not
+    // just read from the buyer's profile) so it stays accurate even if the
+    // buyer's saved address later changes.
+    private String deliveryName;
+    private String deliveryPhone;
+    private String deliveryAddressLine;
+    private String deliveryCity;
+    private String deliveryState;
+    private String deliveryPincode;
 }

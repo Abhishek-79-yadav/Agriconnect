@@ -26,4 +26,11 @@ public class OrderItem {
     private Double quantity;
 
     private Double price;
+
+    // Whether the platform has paid the farmer their share for this line
+    // item yet. Independent of the order's own `paid` flag, which tracks
+    // whether the BUYER has paid — this tracks whether the FARMER has been
+    // paid out (only eligible once the order itself is paid).
+    @Builder.Default
+    private String payoutStatus = "PENDING";
 }

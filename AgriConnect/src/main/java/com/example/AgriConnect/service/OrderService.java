@@ -1,5 +1,6 @@
 package com.example.AgriConnect.service;
 
+import com.example.AgriConnect.dto.request.CheckoutRequest;
 import com.example.AgriConnect.dto.response.OrderResponse;
 import com.example.AgriConnect.entity.*;
 import com.example.AgriConnect.exception.ApiException;
@@ -24,7 +25,7 @@ public class OrderService {
     private final NotificationService notificationService;
 
     @Transactional
-    public OrderResponse checkout(String email, String paymentMethod) {
+    public OrderResponse checkout(String email, CheckoutRequest request) {
 
         User buyer = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ApiException("User not found"));
@@ -35,7 +36,7 @@ public class OrderService {
             throw new ApiException("Cart is empty");
         }
 
-        boolean isCod = "COD".equalsIgnoreCase(paymentMethod);
+        boolean isCod = "COD".equalsIgnoreCase(request.getPaymentMethod());
 
         Order order = Order.builder()
                 .buyer(buyer)
@@ -45,6 +46,12 @@ public class OrderService {
                 .status(isCod ? OrderStatus.CONFIRMED : OrderStatus.PENDING)
                 .paid(false)
                 .paymentMethod(isCod ? "COD" : "ONLINE")
+                .deliveryName(request.getDeliveryName())
+                .deliveryPhone(request.getDeliveryPhone())
+                .deliveryAddressLine(request.getDeliveryAddressLine())
+                .deliveryCity(request.getDeliveryCity())
+                .deliveryState(request.getDeliveryState())
+                .deliveryPincode(request.getDeliveryPincode())
                 .items(new ArrayList<>())
                 .build();
 
@@ -226,6 +233,12 @@ public class OrderService {
                 .paymentId(order.getPaymentId())
                 .createdAt(order.getCreatedAt())
                 .items(items)
+                .deliveryName(order.getDeliveryName())
+                .deliveryPhone(order.getDeliveryPhone())
+                .deliveryAddressLine(order.getDeliveryAddressLine())
+                .deliveryCity(order.getDeliveryCity())
+                .deliveryState(order.getDeliveryState())
+                .deliveryPincode(order.getDeliveryPincode())
                 .build();
     }
 }

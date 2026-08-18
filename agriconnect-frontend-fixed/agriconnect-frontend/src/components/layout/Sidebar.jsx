@@ -97,6 +97,7 @@ export const MENUS = {
         { to: "/admin/users", label: "Users", icon: Users },
         { to: "/admin/products", label: "Products", icon: Package },
         { to: "/admin/orders", label: "Orders", icon: ShoppingCart },
+        { to: "/admin/payouts", label: "Farmer Payouts", icon: Wallet },
         { to: "/admin/coupons", label: "Coupons", icon: Tag },
         { to: "/admin/schemes", label: "Schemes", icon: Landmark },
       ],
