@@ -111,7 +111,7 @@ export default function ProductForm({ onSubmit, initialData = {}, submitting = f
 
       <TextArea label="Description" rows={3} value={product.description} onChange={set("description")} />
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <Input label="City" value={product.city} onChange={set("city")} />
         <Input label="State" value={product.state} onChange={set("state")} />
         <Input label="Country" value={product.country} onChange={set("country")} />

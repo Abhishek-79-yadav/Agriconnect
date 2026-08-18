@@ -55,7 +55,7 @@ export default function MyProducts() {
           }
         />
       ) : (
-        <div className="overflow-hidden rounded-lg border border-line bg-card">
+        <div className="rounded-lg border border-line bg-card overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="border-b border-line bg-paper text-left text-xs uppercase tracking-wide text-ink/50">
               <tr>
