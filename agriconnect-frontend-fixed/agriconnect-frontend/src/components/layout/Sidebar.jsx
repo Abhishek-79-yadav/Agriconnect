@@ -28,7 +28,11 @@ import { logoutThunk } from "../../redux/thunks/authThunk";
 
 // Grouped into sections (like "OVERVIEW" / "FLEET" / "PEOPLE") so the
 // sidebar reads as a structured admin panel rather than one flat list.
-const MENUS = {
+// Exported so the mobile nav (Navbar.jsx) can render the same full menu —
+// previously the mobile menu had its own short hardcoded list and most
+// role-specific pages (Orders, Revenue, Weather, Smart Crop, etc.) were
+// completely unreachable on mobile since Sidebar itself is desktop-only.
+export const MENUS = {
   [ROLES.BUYER]: [
     {
       section: "Overview",

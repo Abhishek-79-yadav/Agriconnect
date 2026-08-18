@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -21,11 +21,21 @@ export default function Checkout() {
   const [submitting, setSubmitting] = useState(false);
   const [placedOrder, setPlacedOrder] = useState(null);
 
+  // React state updates aren't synchronous — on mobile a fast double-tap
+  // can fire this handler twice before the button's `disabled` prop
+  // actually re-renders, placing the same order twice. A ref is checked
+  // and set immediately (no re-render needed) so the second tap bails
+  // out right away.
+  const submittingRef = useRef(false);
+
   const total = items.reduce((sum, item) => sum + (item.totalPrice || 0), 0);
 
   const checkout = async () => {
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     setSubmitting(true);
     const result = await dispatch(placeOrderThunk(method));
+    submittingRef.current = false;
     setSubmitting(false);
 
     if (placeOrderThunk.fulfilled.match(result)) {

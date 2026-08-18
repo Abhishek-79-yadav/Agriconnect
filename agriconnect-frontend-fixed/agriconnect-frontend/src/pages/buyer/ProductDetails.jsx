@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import { Leaf, ShoppingCart, Heart, MapPin } from "lucide-react";
+import { Leaf, ShoppingCart, Heart, MapPin, User, Mail, Package } from "lucide-react";
 
 import { fetchProductDetails } from "../../redux/thunks/productThunk";
 import { addToCartThunk } from "../../redux/thunks/cartThunk";
@@ -75,6 +75,29 @@ export default function ProductDetails() {
             ₹{product.price}
             <span className="ml-1 text-sm font-normal text-ink/50">/ {product.unit?.toLowerCase() || "unit"}</span>
           </p>
+
+          <p className="mt-1 flex items-center gap-1 text-sm text-ink/60">
+            <Package className="h-4 w-4" />
+            {product.quantity != null ? `${product.quantity} ${product.unit?.toLowerCase() || ""} available` : "Availability unknown"}
+          </p>
+
+          {product.farmerName && (
+            <div className="mt-4 flex flex-col gap-2 rounded border border-line bg-paper p-3">
+              <p className="flex items-center gap-2 text-sm text-ink">
+                <User className="h-4 w-4 text-ink/50" />
+                Sold by <span className="font-medium">{product.farmerName}</span>
+              </p>
+              {product.farmerEmail && (
+                <a
+                  href={`mailto:${product.farmerEmail}?subject=${encodeURIComponent(`Question about ${name}`)}`}
+                  className="flex items-center gap-2 text-sm text-gold-dark hover:underline"
+                >
+                  <Mail className="h-4 w-4" />
+                  Contact farmer
+                </a>
+              )}
+            </div>
+          )}
 
           {product.description && <p className="mt-4 text-sm leading-relaxed text-ink/70">{product.description}</p>}
 

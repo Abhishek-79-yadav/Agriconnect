@@ -8,6 +8,7 @@ import { logoutThunk } from "../../redux/thunks/authThunk";
 import ROLES from "../../constants/roles";
 import Logo from "../common/Logo";
 import NotificationBell from "./NotificationBell";
+import { MENUS } from "./Sidebar";
 
 const ROLE_BADGE = {
   [ROLES.FARMER]: "bg-field-light text-field-dark",
@@ -211,24 +212,24 @@ export default function Navbar() {
                   </Link>
                 </>
               )}
-              <Link
-                to={ROLE_DASHBOARD_PATH[user?.role] || "/"}
-                onClick={() => setMobileOpen(false)}
-                className="rounded px-2 py-2.5 text-sm text-ink hover:bg-card"
-              >
-                Dashboard
-              </Link>
-              <Link
-                to={{
-                  [ROLES.BUYER]: "/buyer/notifications",
-                  [ROLES.FARMER]: "/farmer/notifications",
-                  [ROLES.ADMIN]: "/admin/notifications",
-                }[user?.role] || "/"}
-                onClick={() => setMobileOpen(false)}
-                className="rounded px-2 py-2.5 text-sm text-ink hover:bg-card"
-              >
-                Notifications
-              </Link>
+              {(MENUS[user?.role] || []).map(({ section, items }) => (
+                <div key={section} className="mt-1">
+                  <p className="px-2 pb-1 pt-2 text-[11px] font-semibold uppercase tracking-wider text-ink/40">
+                    {section}
+                  </p>
+                  {items.map(({ to, label, icon: Icon }) => (
+                    <Link
+                      key={to}
+                      to={to}
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-2.5 rounded px-2 py-2.5 text-sm text-ink hover:bg-card"
+                    >
+                      <Icon size={16} className="text-ink/50" />
+                      {label}
+                    </Link>
+                  ))}
+                </div>
+              ))}
               <Link
                 to="/profile"
                 onClick={() => setMobileOpen(false)}
