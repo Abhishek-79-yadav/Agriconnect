@@ -31,6 +31,8 @@ public class ProductResponse {
 
     private String farmerName;
 
+    private Long farmerId;
+
     private String farmerEmail;
 
     private String imageUrl;

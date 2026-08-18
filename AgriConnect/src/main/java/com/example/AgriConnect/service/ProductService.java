@@ -189,6 +189,9 @@ public class ProductService {
                 .farmerName(
                         p.getFarmer() != null ? p.getFarmer().getName() : null
                 )
+                .farmerId(
+                        p.getFarmer() != null ? p.getFarmer().getId() : null
+                )
                 .farmerEmail(
                         p.getFarmer() != null ? p.getFarmer().getEmail() : null
                 )

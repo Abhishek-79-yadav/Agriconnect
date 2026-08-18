@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import { Leaf, ShoppingCart, Heart, MapPin, User, Mail, Package } from "lucide-react";
+import { Leaf, ShoppingCart, Heart, MapPin, User, Mail, Package, Star } from "lucide-react";
 
 import { fetchProductDetails } from "../../redux/thunks/productThunk";
 import { addToCartThunk } from "../../redux/thunks/cartThunk";
 import { addWishlistThunk } from "../../redux/thunks/wishlistThunk";
+import {
+  submitRatingThunk,
+  fetchFarmerRatingsThunk,
+  fetchFarmerRatingAverageThunk,
+} from "../../redux/thunks/ratingThunk";
 import Loader from "../../components/ui/Loader";
 import Button from "../../components/ui/Button";
 import Breadcrumb from "../../components/ui/Breadcrumb";
@@ -14,13 +19,25 @@ import Breadcrumb from "../../components/ui/Breadcrumb";
 export default function ProductDetails() {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [qty, setQty] = useState(1);
+  const [reviewStars, setReviewStars] = useState(5);
+  const [reviewComment, setReviewComment] = useState("");
+  const [submittingReview, setSubmittingReview] = useState(false);
 
   const { product, loading } = useSelector((state) => state.products);
+  const { ratings, averageRating } = useSelector((state) => state.rating);
 
   useEffect(() => {
     dispatch(fetchProductDetails(id));
   }, [dispatch, id]);
+
+  useEffect(() => {
+    if (product?.farmerId) {
+      dispatch(fetchFarmerRatingsThunk(product.farmerId));
+      dispatch(fetchFarmerRatingAverageThunk(product.farmerId));
+    }
+  }, [dispatch, product?.farmerId]);
 
   if (loading || !product) return <Loader label="Loading product..." full />;
 
@@ -41,6 +58,37 @@ export default function ProductDetails() {
       toast.success("Added to wishlist");
     } else {
       toast.error("Could not add to wishlist");
+    }
+  };
+
+  // Direct buy: add to cart, then skip straight to checkout instead of
+  // making the buyer visit the cart page as a separate step.
+  const handleBuyNow = async () => {
+    const result = await dispatch(addToCartThunk({ productId: product.id, qty }));
+    if (addToCartThunk.fulfilled.match(result)) {
+      navigate("/buyer/checkout");
+    } else {
+      toast.error("Could not start checkout");
+    }
+  };
+
+  const handleSubmitReview = async () => {
+    if (!reviewComment.trim()) {
+      toast.error("Please add a short comment");
+      return;
+    }
+    setSubmittingReview(true);
+    const result = await dispatch(
+      submitRatingThunk({ farmerId: product.farmerId, stars: reviewStars, comment: reviewComment.trim() })
+    );
+    setSubmittingReview(false);
+    if (submitRatingThunk.fulfilled.match(result)) {
+      toast.success("Review submitted");
+      setReviewComment("");
+      setReviewStars(5);
+      dispatch(fetchFarmerRatingAverageThunk(product.farmerId));
+    } else {
+      toast.error(result.payload?.message || "Could not submit review");
     }
   };
 
@@ -112,6 +160,10 @@ export default function ProductDetails() {
               <ShoppingCart className="h-4 w-4" /> Add to cart
             </Button>
 
+            <Button onClick={handleBuyNow} variant="outline" className="flex-1">
+              Buy now
+            </Button>
+
             <Button variant="outline" onClick={handleWishlist}>
               <Heart className="h-4 w-4" />
             </Button>
@@ -122,6 +174,56 @@ export default function ProductDetails() {
           </Link>
         </div>
       </div>
+
+      {/* Farmer rating summary + reviews */}
+      {product.farmerId && (
+        <div className="mt-10 border-t border-line pt-8">
+          <div className="flex items-center gap-2">
+            <h2 className="font-display text-xl text-ink">Reviews for {product.farmerName}</h2>
+            {averageRating != null && (
+              <span className="flex items-center gap-1 text-sm text-ink/60">
+                <Star className="h-4 w-4 fill-gold text-gold" />
+                {averageRating.toFixed(1)} ({ratings.length})
+              </span>
+            )}
+          </div>
+
+          <div className="mt-4 rounded-lg border border-line bg-card p-4">
+            <p className="text-sm font-medium text-ink">Leave a review</p>
+            <div className="mt-2 flex gap-1">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <button key={n} type="button" onClick={() => setReviewStars(n)} aria-label={`${n} stars`}>
+                  <Star className={`h-6 w-6 ${n <= reviewStars ? "fill-gold text-gold" : "text-line"}`} />
+                </button>
+              ))}
+            </div>
+            <textarea
+              value={reviewComment}
+              onChange={(e) => setReviewComment(e.target.value)}
+              placeholder="How was this farmer's produce and service?"
+              rows={3}
+              className="mt-3 w-full rounded border border-line bg-paper p-2 text-sm text-ink outline-none focus:border-gold"
+            />
+            <Button onClick={handleSubmitReview} loading={submittingReview} className="mt-2">
+              Submit review
+            </Button>
+          </div>
+
+          <div className="mt-4 flex flex-col gap-3">
+            {ratings.length === 0 && <p className="text-sm text-ink/50">No reviews yet.</p>}
+            {ratings.map((r) => (
+              <div key={r.id} className="rounded border border-line bg-paper p-3">
+                <div className="flex items-center gap-1">
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <Star key={n} className={`h-4 w-4 ${n <= r.stars ? "fill-gold text-gold" : "text-line"}`} />
+                  ))}
+                </div>
+                {r.comment && <p className="mt-1 text-sm text-ink/70">{r.comment}</p>}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

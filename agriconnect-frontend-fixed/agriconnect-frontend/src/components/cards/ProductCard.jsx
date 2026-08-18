@@ -1,11 +1,37 @@
-import { Link } from "react-router-dom";
-import { Leaf } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import toast from "react-hot-toast";
+import { Leaf, ShoppingCart } from "lucide-react";
 import Badge from "../ui/Badge";
+import Button from "../ui/Button";
+import { addToCartThunk } from "../../redux/thunks/cartThunk";
 
 export default function ProductCard({ product, action }) {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const name = product.productName || product.name || "Unnamed product";
   const price = product.price ?? "-";
   const unit = product.unit?.toLowerCase() || "unit";
+
+  const handleAddToCart = async (e) => {
+    e.preventDefault();
+    const result = await dispatch(addToCartThunk({ productId: product.id, qty: 1 }));
+    if (addToCartThunk.fulfilled.match(result)) {
+      toast.success("Added to cart");
+    } else {
+      toast.error("Could not add to cart");
+    }
+  };
+
+  const handleBuyNow = async (e) => {
+    e.preventDefault();
+    const result = await dispatch(addToCartThunk({ productId: product.id, qty: 1 }));
+    if (addToCartThunk.fulfilled.match(result)) {
+      navigate("/buyer/checkout");
+    } else {
+      toast.error("Could not start checkout");
+    }
+  };
 
   return (
     <div className="group flex flex-col overflow-hidden rounded-lg border border-line bg-card shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
@@ -42,8 +68,18 @@ export default function ProductCard({ product, action }) {
             ₹{price}
             <span className="ml-1 text-xs font-normal text-ink/50">/ {unit}</span>
           </span>
-          {action}
         </div>
+
+        {action || (
+          <div className="mt-2 flex gap-2">
+            <Button onClick={handleAddToCart} variant="outline" className="flex-1 !py-1.5 text-xs">
+              <ShoppingCart className="h-3.5 w-3.5" /> Add to cart
+            </Button>
+            <Button onClick={handleBuyNow} className="flex-1 !py-1.5 text-xs">
+              Buy now
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
