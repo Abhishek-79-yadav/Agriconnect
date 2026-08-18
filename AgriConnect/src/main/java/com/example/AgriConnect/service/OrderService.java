@@ -183,6 +183,15 @@ public class OrderService {
             });
         }
 
+        // COD orders start unpaid (checkout() sets paid=false since nothing
+        // has actually changed hands yet). Cash is collected at the moment
+        // of delivery, so that's when it should start counting toward
+        // revenue/collection totals — otherwise a delivered COD order would
+        // never show up as "collected" even though the farmer has been paid.
+        if (newStatus == OrderStatus.DELIVERED && "COD".equalsIgnoreCase(order.getPaymentMethod())) {
+            order.setPaid(true);
+        }
+
         order.setStatus(newStatus);
         Order saved = orderRepository.save(order);
         return mapToResponse(saved);
