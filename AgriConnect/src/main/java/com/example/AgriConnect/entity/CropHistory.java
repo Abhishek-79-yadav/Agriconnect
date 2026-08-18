@@ -35,5 +35,5 @@ public class CropHistory {
     private String fertilizerUsed;
     private Double fertilizerQuantityKg;
     private String pesticideUsed;
-    private Double pesticideQuantityL;
+    private Double pesticideQuantity;
 }
