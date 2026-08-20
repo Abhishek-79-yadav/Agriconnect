@@ -4,5 +4,6 @@ public enum Role {
     FARMER,
     BUYER,
     BRAND,
-    ADMIN
+    ADMIN,
+    SUPER_ADMIN
 }

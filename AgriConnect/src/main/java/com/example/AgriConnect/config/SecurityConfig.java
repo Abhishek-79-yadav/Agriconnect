@@ -49,6 +49,7 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.GET, "/api/crops/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/buyer/products/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/plans").permitAll()
                         // PhonePe calls this server-to-server with no JWT — the
                         // X-VERIFY checksum inside PhonePeService is what actually
                         // authenticates it, not Spring Security's role check.
@@ -56,16 +57,17 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/buyer/**").hasRole("BUYER")
                         .requestMatchers("/api/farmer/**").hasRole("FARMER")
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
+                        .requestMatchers("/api/super-admin/**").hasRole("SUPER_ADMIN")
                         .requestMatchers("/api/brand/**").hasRole("BRAND")
                         .requestMatchers("/api/wishlist/**")
                         .hasAnyRole("BUYER","FARMER")
                         .requestMatchers("/api/search/**").permitAll()
                         .requestMatchers(HttpMethod.POST,
                                 "/api/coupon")
-                        .hasRole("ADMIN")
+                        .hasAnyRole("ADMIN", "SUPER_ADMIN")
                         .requestMatchers("/api/cloudinary/**")
-                        .hasAnyRole("FARMER","ADMIN")
+                        .hasAnyRole("FARMER","ADMIN","SUPER_ADMIN")
 
                         .requestMatchers(
                                 "/swagger-ui/**",

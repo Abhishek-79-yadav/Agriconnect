@@ -1,5 +1,5 @@
 import axios from "./axios";
-import { ORDER_ENDPOINTS } from "./endpoints";
+import { ORDER_ENDPOINTS, BUYER_DISPUTE_ENDPOINTS } from "./endpoints";
 
 /** POST /api/orders/checkout */
 export const placeOrderApi = async (checkoutData) => {
@@ -24,5 +24,15 @@ export const updateOrderStatusApi = async (id, status) => {
   const res = await axios.put(ORDER_ENDPOINTS.UPDATE_STATUS(id), null, {
     params: { status },
   });
+  return res.data;
+};
+
+export const fileDisputeApi = async (data) => {
+  const res = await axios.post(BUYER_DISPUTE_ENDPOINTS.FILE, data);
+  return res.data;
+};
+
+export const getMyDisputesApi = async () => {
+  const res = await axios.get(BUYER_DISPUTE_ENDPOINTS.MINE);
   return res.data;
 };

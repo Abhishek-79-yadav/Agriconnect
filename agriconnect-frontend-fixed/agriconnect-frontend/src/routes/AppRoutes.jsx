@@ -16,6 +16,7 @@ import AdminLayout from "../layouts/AdminLayout";
 import Home from "../pages/public/Home";
 import Login from "../pages/public/Login";
 import Register from "../pages/public/Register";
+import RegisterBrand from "../pages/public/RegisterBrand";
 import About from "../pages/public/About";
 import Contact from "../pages/public/Contact";
 import ForgotPassword from "../pages/public/ForgotPassword";
@@ -57,6 +58,10 @@ import UploadVideo from "../pages/farmer/UploadVideo";
 import FarmLog from "../pages/farmer/FarmLog";
 import FarmerSchemes from "../pages/farmer/Schemes";
 import FarmerNotifications from "../pages/farmer/Notifications";
+import BrandDashboard from "../pages/brand/Dashboard";
+import BrandAgriInputs from "../pages/brand/AgriInputs";
+import Plans from "../pages/shared/Plans";
+import AgriInputsBrowse from "../pages/buyer/AgriInputsBrowse";
 
 // Admin pages
 import AdminDashboard from "../pages/admin/Dashboard";
@@ -67,6 +72,9 @@ import AdminCoupons from "../pages/admin/Coupons";
 import AdminSchemes from "../pages/admin/Schemes";
 import AdminReports from "../pages/admin/Reports";
 import AdminPayouts from "../pages/admin/Payouts";
+import AdminPendingBrands from "../pages/admin/PendingBrands";
+import ManageAdmins from "../pages/admin/ManageAdmins";
+import Governance from "../pages/admin/Governance";
 import AdminAnalytics from "../pages/admin/Analytics";
 import AdminNotifications from "../pages/admin/Notifications";
 import AdminSettings from "../pages/admin/Settings";
@@ -126,6 +134,7 @@ export default function AppRoutes() {
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/register-brand" element={<RegisterBrand />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/verify-otp" element={<VerifyOtp />} />
@@ -147,6 +156,8 @@ export default function AppRoutes() {
         <Route path="checkout" element={<Checkout />} />
         <Route path="orders" element={<BuyerOrders />} />
         <Route path="coupons" element={<Coupons />} />
+        <Route path="agri-inputs" element={<AgriInputsBrowse />} />
+        <Route path="plans" element={<Plans />} />
         <Route path="notifications" element={<BuyerNotifications />} />
         <Route path="payment/success" element={<PaymentSuccess />} />
         <Route path="payment/failed" element={<PaymentFailed />} />
@@ -178,11 +189,25 @@ export default function AppRoutes() {
         <Route path="notifications" element={<FarmerNotifications />} />
       </Route>
 
+      {/* ---------- Brand (fertilizer/pesticide companies) ---------- */}
+      <Route
+        path="/brand"
+        element={
+          <RoleRoute allowedRoles={[ROLES.BRAND]}>
+            <FarmerLayout />
+          </RoleRoute>
+        }
+      >
+        <Route path="dashboard" element={<BrandDashboard />} />
+        <Route path="agri-inputs" element={<BrandAgriInputs />} />
+        <Route path="plans" element={<Plans />} />
+      </Route>
+
       {/* ---------- Admin ---------- */}
       <Route
         path="/admin"
         element={
-          <RoleRoute allowedRoles={[ROLES.ADMIN]}>
+          <RoleRoute allowedRoles={[ROLES.ADMIN, ROLES.SUPER_ADMIN]}>
             <AdminLayout />
           </RoleRoute>
         }
@@ -195,6 +220,9 @@ export default function AppRoutes() {
         <Route path="schemes" element={<AdminSchemes />} />
         <Route path="reports" element={<AdminReports />} />
         <Route path="payouts" element={<AdminPayouts />} />
+        <Route path="pending-brands" element={<AdminPendingBrands />} />
+        <Route path="manage-admins" element={<ManageAdmins />} />
+        <Route path="governance" element={<Governance />} />
         <Route path="analytics" element={<AdminAnalytics />} />
         <Route path="notifications" element={<AdminNotifications />} />
         <Route path="settings" element={<AdminSettings />} />

@@ -1,13 +1,16 @@
 package com.example.AgriConnect.service;
 
 import com.example.AgriConnect.dto.request.RegisterRequest;
+import com.example.AgriConnect.dto.request.RegisterBrandRequest;
 import com.example.AgriConnect.dto.request.LoginRequest;
 import com.example.AgriConnect.dto.response.AuthResponse;
 import com.example.AgriConnect.dto.response.UserResponse;
+import com.example.AgriConnect.entity.BrandProfile;
 import com.example.AgriConnect.entity.RefreshToken;
 import com.example.AgriConnect.entity.Role;
 import com.example.AgriConnect.entity.User;
 import com.example.AgriConnect.exception.ApiException;
+import com.example.AgriConnect.repository.BrandProfileRepository;
 import com.example.AgriConnect.repository.PasswordResetOtpRepository;
 import com.example.AgriConnect.repository.RefreshTokenRepository;
 import com.example.AgriConnect.repository.UserRepository;
@@ -30,13 +33,19 @@ public class AuthService {
     private final PasswordResetOtpRepository otpRepo;
     private final RefreshTokenRepository refreshTokenRepo;
     private final TokenBlacklistService tokenBlacklistService;
+    private final BrandProfileRepository brandProfileRepo;
     private final PasswordEncoder encoder;
     private final JwtService jwt;
     private final EmailService emailService;
 
+    @org.springframework.beans.factory.annotation.Value("${app.super-admin-setup-key}")
+    private String superAdminSetupKey;
+
     // Roles a person is allowed to pick for themselves on public /api/auth/register.
-    // ADMIN and BRAND accounts must be created through a separate, protected
-    // admin-only flow — never from an unauthenticated endpoint.
+    // ADMIN accounts must be created through a separate, protected admin-only
+    // flow — never from an unauthenticated endpoint. BRAND has its OWN
+    // dedicated endpoint (registerBrand, below) since it needs extra company
+    // fields and starts disabled pending admin approval.
     private static final Set<Role> SELF_REGISTERABLE_ROLES = Set.of(Role.FARMER, Role.BUYER);
 
     public AuthResponse register(RegisterRequest req) {
@@ -65,6 +74,72 @@ public class AuthService {
         return issueTokens(user);
     }
 
+    /**
+     * Company (BRAND) self-registration. Unlike FARMER/BUYER, a new BRAND
+     * account is created disabled (enabled=false) and can't log in until an
+     * admin approves it — see login() below and AdminController's
+     * approve-brand endpoint. No tokens are issued here since the account
+     * isn't usable yet.
+     */
+    public void registerBrand(RegisterBrandRequest req) {
+
+        if (repo.findByEmail(req.getEmail()).isPresent()) {
+            throw new ApiException("Email already exists");
+        }
+
+        User user = User.builder()
+                .name(req.getName())
+                .email(req.getEmail())
+                .password(encoder.encode(req.getPassword()))
+                .mobile(req.getMobile())
+                .city(req.getCity())
+                .state(req.getState())
+                .role(Role.BRAND)
+                .enabled(false)
+                .build();
+
+        repo.save(user);
+
+        brandProfileRepo.save(BrandProfile.builder()
+                .user(user)
+                .companyName(req.getCompanyName())
+                .gstNumber(req.getGstNumber())
+                .category(req.getCategory())
+                .build());
+    }
+
+    /**
+     * One-time creation of the first SUPER_ADMIN account. Guarded two ways:
+     * the caller must know app.super-admin-setup-key (an env var, not
+     * committed to source), AND this only works while zero SUPER_ADMINs
+     * exist yet — so even a leaked key is useless after the first run.
+     * Change your password immediately after the first login.
+     */
+    public void bootstrapSuperAdmin(com.example.AgriConnect.dto.request.BootstrapSuperAdminRequest req) {
+
+        if (superAdminSetupKey == null || superAdminSetupKey.isBlank()
+                || !superAdminSetupKey.equals(req.getSetupKey())) {
+            throw new ApiException("Invalid setup key");
+        }
+
+        if (repo.findAll().stream().anyMatch(u -> u.getRole() == Role.SUPER_ADMIN)) {
+            throw new ApiException("A super admin already exists — use the admin panel to create further admins");
+        }
+
+        if (repo.findByEmail(req.getEmail()).isPresent()) {
+            throw new ApiException("Email already exists");
+        }
+
+        User user = User.builder()
+                .name(req.getName())
+                .email(req.getEmail())
+                .password(encoder.encode(req.getPassword()))
+                .role(Role.SUPER_ADMIN)
+                .build();
+
+        repo.save(user);
+    }
+
     public UserResponse getProfile(String email){
 
         User user = repo.findByEmail(email)
@@ -86,6 +161,15 @@ public class AuthService {
 
         if (!encoder.matches(req.getPassword(), user.getPassword())) {
             throw new ApiException("Invalid credentials");
+        }
+
+        if (!user.isEnabled()) {
+            if (user.getSuspensionReason() != null) {
+                throw new ApiException("Your account has been suspended: " + user.getSuspensionReason());
+            }
+            throw new ApiException(user.getRole() == Role.BRAND
+                    ? "Your company account is pending admin approval"
+                    : "Your account has been disabled. Contact support.");
         }
 
         return issueTokens(user);

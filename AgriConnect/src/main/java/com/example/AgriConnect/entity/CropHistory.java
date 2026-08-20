@@ -35,6 +35,12 @@ public class CropHistory {
     private String fertilizerUsed;
     private Double fertilizerQuantityKg;
     private String pesticideUsed;
+
+    // Explicit column name: Hibernate's default naming strategy doesn't
+    // insert an underscore before a trailing single capital letter, so
+    // "pesticideQuantityL" would otherwise map to "pesticide_quantityl"
+    // (no underscore before the final "l"), which doesn't match the
+    // "pesticide_quantity_l" column the migration actually created.
     @Column(name = "pesticide_quantity_l")
     private Double pesticideQuantityL;
 }

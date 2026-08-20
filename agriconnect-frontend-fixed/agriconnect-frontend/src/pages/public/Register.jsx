@@ -27,6 +27,13 @@ export default function Register() {
             Sign in
           </Link>
         </p>
+
+        <p className="mt-2 text-center text-sm text-ink/60">
+          Registering a company instead?{" "}
+          <Link to="/register-brand" className="font-medium text-gold-dark hover:underline">
+            Register here
+          </Link>
+        </p>
       </div>
     </div>
   );

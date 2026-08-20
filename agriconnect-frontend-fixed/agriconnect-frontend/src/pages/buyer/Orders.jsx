@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import { CreditCard } from "lucide-react";
+import { CreditCard, MessageSquareWarning } from "lucide-react";
 
 import { fetchOrdersThunk, updateOrderStatusThunk } from "../../redux/thunks/orderThunk";
+import { fileDisputeApi } from "../../api/orderApi";
 import OrderCard from "../../components/cards/OrderCard";
 import PageHeader from "../../components/common/PageHeader";
 import Loader from "../../components/ui/Loader";
 import EmptyState from "../../components/ui/EmptyState";
 import Button from "../../components/ui/Button";
+import Input from "../../components/ui/Input";
 import ConfirmDialog from "../../components/ui/ConfirmDialog";
 import Modal from "../../components/ui/Modal";
 import Payment from "./Payment";
@@ -23,6 +25,10 @@ export default function Orders() {
   const [toCancel, setToCancel] = useState(null);
   const [cancelling, setCancelling] = useState(false);
   const [payingOrderId, setPayingOrderId] = useState(null);
+  const [disputingOrder, setDisputingOrder] = useState(null);
+  const [disputeReason, setDisputeReason] = useState("");
+  const [disputeDescription, setDisputeDescription] = useState("");
+  const [filingDispute, setFilingDispute] = useState(false);
 
   useEffect(() => {
     dispatch(fetchOrdersThunk("buyer"));
@@ -38,6 +44,29 @@ export default function Orders() {
       toast.success("Order cancelled");
     } else {
       toast.error(result.payload?.message || "Could not cancel order");
+    }
+  };
+
+  const submitDispute = async () => {
+    if (!disputeReason.trim()) {
+      toast.error("Please give a reason");
+      return;
+    }
+    setFilingDispute(true);
+    try {
+      await fileDisputeApi({
+        orderId: disputingOrder.id,
+        reason: disputeReason.trim(),
+        description: disputeDescription.trim(),
+      });
+      toast.success("Dispute filed — our team will review it");
+      setDisputingOrder(null);
+      setDisputeReason("");
+      setDisputeDescription("");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Could not file dispute");
+    } finally {
+      setFilingDispute(false);
     }
   };
 
@@ -74,6 +103,11 @@ export default function Orders() {
                         Cancel order
                       </Button>
                     )}
+                    {order.status === "DELIVERED" && (
+                      <Button variant="ghost" size="sm" onClick={() => setDisputingOrder(order)}>
+                        <MessageSquareWarning className="h-3.5 w-3.5" /> Report an issue
+                      </Button>
+                    )}
                   </div>
                 }
               />
@@ -96,6 +130,20 @@ export default function Orders() {
 
       <Modal open={!!payingOrderId} onClose={() => setPayingOrderId(null)} title="Complete payment">
         {payingOrderId && <Payment orderId={payingOrderId} />}
+      </Modal>
+
+      <Modal open={!!disputingOrder} onClose={() => setDisputingOrder(null)} title={`Report an issue — Order #${disputingOrder?.id}`}>
+        <div className="flex flex-col gap-3">
+          <Input label="Reason" placeholder="e.g. Item damaged, wrong item, quality issue" value={disputeReason} onChange={(e) => setDisputeReason(e.target.value)} />
+          <textarea
+            value={disputeDescription}
+            onChange={(e) => setDisputeDescription(e.target.value)}
+            placeholder="Tell us more (optional)"
+            rows={3}
+            className="w-full rounded border border-line bg-paper p-2 text-sm text-ink outline-none focus:border-gold"
+          />
+          <Button onClick={submitDispute} loading={filingDispute} className="self-start">Submit</Button>
+        </div>
       </Modal>
     </div>
   );

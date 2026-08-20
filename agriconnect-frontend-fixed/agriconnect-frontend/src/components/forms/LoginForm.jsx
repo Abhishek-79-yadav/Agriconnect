@@ -7,8 +7,10 @@ import { loginThunk } from "../../redux/thunks/authThunk";
 
 const ROLE_HOME_PATH = {
   ADMIN: "/admin/dashboard",
+  SUPER_ADMIN: "/admin/dashboard",
   FARMER: "/farmer/dashboard",
   BUYER: "/buyer/dashboard",
+  BRAND: "/brand/dashboard",
 };
 
 export default function LoginForm() {

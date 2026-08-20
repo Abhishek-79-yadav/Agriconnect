@@ -14,12 +14,16 @@ const ROLE_BADGE = {
   [ROLES.FARMER]: "bg-field-light text-field-dark",
   [ROLES.BUYER]: "bg-slate-light text-slate-dark",
   [ROLES.ADMIN]: "bg-gold-light text-gold-dark",
+  [ROLES.SUPER_ADMIN]: "bg-gold-light text-gold-dark",
+  [ROLES.BRAND]: "bg-slate-light text-slate-dark",
 };
 
 const ROLE_DASHBOARD_PATH = {
   [ROLES.FARMER]: "/farmer/dashboard",
   [ROLES.BUYER]: "/buyer/dashboard",
   [ROLES.ADMIN]: "/admin/dashboard",
+  [ROLES.SUPER_ADMIN]: "/admin/dashboard",
+  [ROLES.BRAND]: "/brand/dashboard",
 };
 
 export default function Navbar() {

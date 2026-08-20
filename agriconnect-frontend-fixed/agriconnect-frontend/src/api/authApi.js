@@ -13,6 +13,14 @@ export const register = async (userData) => {
   return response.data;
 };
 
+/** Register a company (BRAND) — POST /api/auth/register-brand. Doesn't log
+ * the user in — the account is pending admin approval. Returns a plain
+ * string message, not an AuthResponse. */
+export const registerBrand = async (data) => {
+  const response = await axiosInstance.post(AUTH_ENDPOINTS.REGISTER_BRAND, data);
+  return response.data;
+};
+
 /** Logout User — POST /api/auth/logout */
 export const logout = async (refreshToken) => {
   const response = await axiosInstance.post(AUTH_ENDPOINTS.LOGOUT, { refreshToken });

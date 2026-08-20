@@ -7,6 +7,7 @@ import { fetchMyProductsThunk } from "../../redux/thunks/farmerThunk";
 import { fetchOrdersThunk } from "../../redux/thunks/orderThunk";
 import PageHeader from "../../components/common/PageHeader";
 import DashboardCard from "../../components/cards/DashboardCard";
+import AgriInputBanner from "../../components/common/AgriInputBanner";
 import Button from "../../components/ui/Button";
 
 export default function Dashboard() {
@@ -22,6 +23,7 @@ export default function Dashboard() {
 
   return (
     <div>
+      <AgriInputBanner />
       <PageHeader
         title={`Welcome back${user?.name ? `, ${user.name}` : ""}`}
         subtitle="Manage your listings and track your orders."

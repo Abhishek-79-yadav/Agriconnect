@@ -40,4 +40,6 @@ public class ProductResponse {
     private String videoUrl;
 
     private BigDecimal totalPrice;
+
+    private boolean approved;
 }

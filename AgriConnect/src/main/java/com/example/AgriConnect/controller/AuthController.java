@@ -5,6 +5,8 @@ import com.example.AgriConnect.dto.request.LoginRequest;
 import com.example.AgriConnect.dto.request.LogoutRequest;
 import com.example.AgriConnect.dto.request.RefreshTokenRequest;
 import com.example.AgriConnect.dto.request.RegisterRequest;
+import com.example.AgriConnect.dto.request.RegisterBrandRequest;
+import com.example.AgriConnect.dto.request.BootstrapSuperAdminRequest;
 import com.example.AgriConnect.dto.request.ResetPasswordRequest;
 import com.example.AgriConnect.dto.response.ApiResponse;
 import com.example.AgriConnect.dto.response.AuthResponse;
@@ -29,6 +31,28 @@ public class AuthController {
             @Valid @RequestBody RegisterRequest request) {
 
         return ResponseEntity.ok(authService.register(request));
+    }
+
+    // Company/BRAND signup — separate from /register since it takes extra
+    // fields (company name, GST) and doesn't log the user in immediately;
+    // the account sits pending until an admin approves it.
+    @PostMapping("/register-brand")
+    public ResponseEntity<String> registerBrand(
+            @Valid @RequestBody RegisterBrandRequest request) {
+
+        authService.registerBrand(request);
+        return ResponseEntity.ok("Registration received — you can log in once an admin approves your account.");
+    }
+
+    // One-time setup — see AuthService.bootstrapSuperAdmin for the guard
+    // conditions. Not meant to be linked from any UI; call it directly once
+    // during initial deployment.
+    @PostMapping("/bootstrap-super-admin")
+    public ResponseEntity<String> bootstrapSuperAdmin(
+            @Valid @RequestBody BootstrapSuperAdminRequest request) {
+
+        authService.bootstrapSuperAdmin(request);
+        return ResponseEntity.ok("Super admin created. You can log in now.");
     }
 
     @PostMapping("/login")

@@ -28,6 +28,11 @@ public class User {
     @Builder.Default
     private boolean enabled = true;
 
+    // Set when an admin suspends this account (see AdminController.suspendUser).
+    // Cleared on unsuspend. Distinct from a BRAND account's "pending
+    // approval" state (enabled=false but no reason set).
+    private String suspensionReason;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

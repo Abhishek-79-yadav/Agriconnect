@@ -13,6 +13,8 @@ import {
   Users,
   Tag,
   Landmark,
+  Building2,
+  ShieldCheck,
   FileText,
   Heart,
   Bell,
@@ -46,6 +48,8 @@ export const MENUS = {
         { to: "/buyer/orders", label: "Orders", icon: Package },
         { to: "/buyer/wishlist", label: "Wishlist", icon: Heart },
         { to: "/buyer/coupons", label: "Coupons", icon: Tag },
+        { to: "/buyer/agri-inputs", label: "Agri-Inputs", icon: Sprout },
+        { to: "/buyer/plans", label: "Plans", icon: Wallet },
       ],
     },
     {
@@ -82,6 +86,21 @@ export const MENUS = {
       ],
     },
   ],
+  [ROLES.BRAND]: [
+    {
+      section: "Overview",
+      items: [
+        { to: "/brand/dashboard", label: "Dashboard", icon: LayoutDashboard },
+      ],
+    },
+    {
+      section: "Marketplace",
+      items: [
+        { to: "/brand/agri-inputs", label: "My Listings", icon: Package },
+        { to: "/brand/plans", label: "Plans", icon: Wallet },
+      ],
+    },
+  ],
   [ROLES.ADMIN]: [
     {
       section: "Overview",
@@ -98,8 +117,47 @@ export const MENUS = {
         { to: "/admin/products", label: "Products", icon: Package },
         { to: "/admin/orders", label: "Orders", icon: ShoppingCart },
         { to: "/admin/payouts", label: "Farmer Payouts", icon: Wallet },
+        { to: "/admin/pending-brands", label: "Company Approvals", icon: Building2 },
+        { to: "/admin/governance", label: "Governance", icon: ShieldCheck },
         { to: "/admin/coupons", label: "Coupons", icon: Tag },
         { to: "/admin/schemes", label: "Schemes", icon: Landmark },
+      ],
+    },
+    {
+      section: "System",
+      items: [
+        { to: "/admin/notifications", label: "Notifications", icon: Bell },
+        { to: "/admin/settings", label: "Settings", icon: Settings },
+      ],
+    },
+  ],
+  [ROLES.SUPER_ADMIN]: [
+    {
+      section: "Overview",
+      items: [
+        { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
+        { to: "/admin/reports", label: "Reports", icon: FileText },
+        { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+      ],
+    },
+    {
+      section: "Management",
+      items: [
+        { to: "/admin/users", label: "Users", icon: Users },
+        { to: "/admin/products", label: "Products", icon: Package },
+        { to: "/admin/orders", label: "Orders", icon: ShoppingCart },
+        { to: "/admin/payouts", label: "Farmer Payouts", icon: Wallet },
+        { to: "/admin/pending-brands", label: "Company Approvals", icon: Building2 },
+        { to: "/admin/governance", label: "Governance", icon: ShieldCheck },
+        { to: "/admin/coupons", label: "Coupons", icon: Tag },
+        { to: "/admin/schemes", label: "Schemes", icon: Landmark },
+      ],
+    },
+    {
+      // Super-admin-only: this section doesn't appear for regular ADMIN.
+      section: "Super Admin",
+      items: [
+        { to: "/admin/manage-admins", label: "Manage Admins", icon: ShieldCheck },
       ],
     },
     {

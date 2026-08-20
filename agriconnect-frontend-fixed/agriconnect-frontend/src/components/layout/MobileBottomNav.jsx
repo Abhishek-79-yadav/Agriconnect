@@ -1,24 +1,47 @@
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Home, ShoppingCart, Package, User, LayoutDashboard } from "lucide-react";
+import { Home, ShoppingCart, Package, User, LayoutDashboard, Building2, Users } from "lucide-react";
 
 import ROLES from "../../constants/roles";
+
+const ROLE_LINKS = {
+  [ROLES.FARMER]: [
+    { to: "/farmer/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { to: "/farmer/products", label: "Products", icon: Package },
+    { to: "/profile", label: "Profile", icon: User },
+  ],
+  [ROLES.ADMIN]: [
+    { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { to: "/admin/users", label: "Users", icon: Users },
+    { to: "/profile", label: "Profile", icon: User },
+  ],
+  [ROLES.SUPER_ADMIN]: [
+    { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { to: "/admin/manage-admins", label: "Admins", icon: Users },
+    { to: "/profile", label: "Profile", icon: User },
+  ],
+  [ROLES.BRAND]: [
+    { to: "/brand/dashboard", label: "Dashboard", icon: Building2 },
+    { to: "/profile", label: "Profile", icon: User },
+  ],
+  [ROLES.BUYER]: [
+    { to: "/", label: "Home", icon: Home },
+    { to: "/products", label: "Shop", icon: Package },
+    { to: "/buyer/cart", label: "Cart", icon: ShoppingCart },
+    { to: "/profile", label: "Profile", icon: User },
+  ],
+};
+
+const GUEST_LINKS = [
+  { to: "/", label: "Home", icon: Home },
+  { to: "/products", label: "Shop", icon: Package },
+  { to: "/login", label: "Login", icon: User },
+];
 
 export default function MobileBottomNav() {
   const user = useSelector((state) => state.auth.user);
 
-  const links = user?.role === ROLES.FARMER
-    ? [
-        { to: "/farmer/dashboard", label: "Dashboard", icon: LayoutDashboard },
-        { to: "/farmer/products", label: "Products", icon: Package },
-        { to: "/profile", label: "Profile", icon: User },
-      ]
-    : [
-        { to: "/", label: "Home", icon: Home },
-        { to: "/products", label: "Shop", icon: Package },
-        { to: "/buyer/cart", label: "Cart", icon: ShoppingCart },
-        { to: "/profile", label: "Profile", icon: User },
-      ];
+  const links = ROLE_LINKS[user?.role] || GUEST_LINKS;
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-line bg-card md:hidden">

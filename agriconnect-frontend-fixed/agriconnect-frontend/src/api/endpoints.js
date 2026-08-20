@@ -7,6 +7,7 @@
 
 export const AUTH_ENDPOINTS = {
   REGISTER: "/auth/register",
+  REGISTER_BRAND: "/auth/register-brand",
   LOGIN: "/auth/login",
   LOGOUT: "/auth/logout",
   REFRESH: "/auth/refresh",
@@ -134,10 +135,47 @@ export const ADMIN_ENDPOINTS = {
   DELETE_PRODUCT: (id) => `/admin/product/${id}`,
   PAYOUTS: "/admin/payouts",
   MARK_PAID: (orderItemId) => `/admin/payouts/${orderItemId}/mark-paid`,
+  PENDING_BRANDS: "/admin/brands/pending",
+  APPROVE_BRAND: (id) => `/admin/brands/${id}/approve`,
+  ADMINS: "/super-admin/admins",
+  DELETE_ADMIN: (id) => `/super-admin/admins/${id}`,
+  SUSPEND_USER: (id) => `/admin/users/${id}/suspend`,
+  UNSUSPEND_USER: (id) => `/admin/users/${id}/unsuspend`,
+  SUSPENDED_USERS: "/admin/users/suspended",
+  PENDING_PRODUCTS: "/admin/products/pending",
+  APPROVE_PRODUCT: (id) => `/admin/products/${id}/approve`,
+  PENDING_AGRI_INPUTS: "/admin/agri-inputs/pending",
+  APPROVE_AGRI_INPUT: (id) => `/admin/agri-inputs/${id}/approve`,
+  RISK_FLAGS: "/admin/risk-flags",
+  AUDIT_LOGS: "/admin/audit-logs",
+  DISPUTES: "/admin/disputes",
+  RESOLVE_DISPUTE: (id) => `/admin/disputes/${id}/resolve`,
+};
+
+export const BUYER_DISPUTE_ENDPOINTS = {
+  FILE: "/buyer/disputes",
+  MINE: "/buyer/disputes",
 };
 
 export const WEATHER_ENDPOINTS = {
   BY_CITY: (city) => `/weather/${encodeURIComponent(city)}`,
+};
+
+export const PLAN_ENDPOINTS = {
+  LIST: "/plans",
+};
+
+export const SUBSCRIPTION_ENDPOINTS = {
+  SUBSCRIBE: (planId) => `/subscriptions/subscribe/${planId}`,
+  MINE: "/subscriptions/me",
+};
+
+export const AGRI_INPUT_ENDPOINTS = {
+  BRAND_LIST: "/brand/agri-inputs",
+  BRAND_CREATE: "/brand/agri-inputs",
+  BRAND_DELETE: (id) => `/brand/agri-inputs/${id}`,
+  BUYER_BROWSE: "/buyer/agri-inputs",
+  FARMER_ADS: "/farmer/agri-input-ads",
 };
 
 export const HEALTH_ENDPOINT = "/health";

@@ -3,16 +3,14 @@ package com.example.AgriConnect;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class AgriConnectApplication {
 
-	public static void main(String[] args) {
-
-		// Load .env (if present — e.g. local dev) into system properties so
-		// application.properties' ${VAR_NAME} placeholders resolve. In
-		// production, set these as real environment variables instead of
-		// shipping a .env file, and this call is a no-op if none is found.
+	static {
 		Dotenv dotenv = Dotenv.configure()
 				.ignoreIfMissing()
 				.load();
@@ -21,6 +19,25 @@ public class AgriConnectApplication {
 				System.setProperty(entry.getKey(), entry.getValue())
 		);
 
+		// TEMPORARY DEBUG — remove after checking
+		System.out.println("### DEBUG: SUPER_ADMIN_SETUP_KEY loaded as: ["
+				+ System.getProperty("SUPER_ADMIN_SETUP_KEY") + "]");
+	}
+//	@Value("${app.super-admin-setup-key}")
+//	private String setupKey;
+//
+//	@Bean
+//	CommandLineRunner debugKey() {
+//		return args -> {
+//			System.out.println("================================");
+//			System.out.println("ENV KEY = [" +
+//					System.getProperty("SUPER_ADMIN_SETUP_KEY") + "]");
+//			System.out.println("APP KEY = [" + setupKey + "]");
+//			System.out.println("================================");
+//		};
+//	}
+
+	public static void main(String[] args) {
 		SpringApplication.run(AgriConnectApplication.class, args);
 	}
 }

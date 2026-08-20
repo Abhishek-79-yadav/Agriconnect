@@ -51,6 +51,11 @@ public class Product {
     private String imageUrl;
     private String videoUrl;
 
+    // New listings need admin approval before they're visible to buyers
+    // (see ProductService.getApprovedProducts / AdminController.approveProduct).
+    @Builder.Default
+    private boolean approved = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private User farmer;

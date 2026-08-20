@@ -76,6 +76,7 @@ public class ProductService {
                 .imageUrl(request.getImageUrl())
                 .videoUrl(request.getVideoUrl())
                 .available(true)
+                .approved(false)
                 .farmer(farmer)
                 .build();
 
@@ -156,6 +157,7 @@ public class ProductService {
         return productRepository.findAll()
                 .stream()
                 .filter(Product::isAvailable)
+                .filter(Product::isApproved)
                 .map(this::mapToResponse)
                 .toList();
     }
@@ -202,6 +204,7 @@ public class ProductService {
                                 ? p.getPrice().multiply(BigDecimal.valueOf(p.getQuantity()))
                                 : BigDecimal.ZERO
                 )
+                .approved(p.isApproved())
                 .build();
     }
 }
